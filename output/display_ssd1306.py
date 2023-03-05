@@ -9,13 +9,23 @@ OLED SSD1306 utility - adafruit_ssd1306 extension
 
 """
 
-import busio
+import time, busio, displayio
 import adafruit_ssd1306
 
+import adafruit_displayio_ssd1306
+import adafruit_imageload
+
+def release():
+    # Release all displays
+    displayio.release_displays()    
 
 class _OLED():
-    
-    def circ(self,x,y,r, *, fill=1,color=1):
+
+    def __init__(self, width, height, i2c, addr):
+        display_bus = displayio.I2CDisplay(i2c, device_address=addr)
+        self.displayio_ssd1306 = adafruit_displayio_ssd1306.SSD1306(display_bus, width=width, height=height)
+        
+    def circ(self, x, y, r, *, fill=1, color=1):
         for i in range(x-r,x+r+1):
             for j in range(y-r,y+r+1):
                 if fill==1:
@@ -69,6 +79,28 @@ class _OLED():
 
             f.close()
 
+    def animate(self, sprite, width, height, frames, *, x:int = 0, y:int = 0, invert:bool = False, repeat:int = 1, fps:int = 20):
+        group = displayio.Group()
+        icon_bit, icon_pal = adafruit_imageload.load(sprite, bitmap=displayio.Bitmap, palette=displayio.Palette)
+        if invert:
+            temp = icon_pal[0]
+            icon_pal[0] = icon_pal[1]
+            icon_pal[1] = temp    
+        icon_grid = displayio.TileGrid(icon_bit, pixel_shader=icon_pal, width=1, height=1, tile_height=height, tile_width=width, default_tile=0, x=x, y=y)
+        group.append(icon_grid)
+        self.displayio_ssd1306.show(group)
+        delay = 1 / fps
+        while repeat > 0:
+            repeat -= 1
+            timer = 0
+            pointer = 0
+            while pointer < frames:
+              if (timer + delay) < time.monotonic():
+                icon_grid[0] = pointer
+                pointer += 1
+                timer = time.monotonic()
+
+
 class Display_I2C(adafruit_ssd1306.SSD1306_I2C, _OLED):
 
     def __init__(self, width: int, height: int, i2c: busio.I2C, *, addr: int = 0x3C):
@@ -80,3 +112,4 @@ class Display_I2C(adafruit_ssd1306.SSD1306_I2C, _OLED):
             i2c,
             addr = addr
             )
+        _OLED.__init__(self, width, height, i2c, addr)

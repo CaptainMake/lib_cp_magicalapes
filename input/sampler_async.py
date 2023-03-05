@@ -13,7 +13,7 @@ import supervisor, time
 import board, analogio, digitalio
 
 class FeedIn():
-    def __init__(self, sname: str, dimensions: int = 3, samples: int = 2, threshold: int = 100):
+    def __init__(self, sname: str, dimensions: int = 1, samples: int = 2, threshold: int = 100):
         # Config
         self.sname = sname
         self.dimensions = dimensions
@@ -65,6 +65,10 @@ class Analog():
         return self.sname
 
     @property
+    def value(self):
+        return self.input.value
+
+    @property
     def sample_count(self):
         return len(self.sample_array)
 
@@ -96,6 +100,10 @@ class Digital():
     @property
     def name(self):
         return self.sname
+
+    @property
+    def value(self):
+        return self.input.value
 
     @property
     def sample_count(self):

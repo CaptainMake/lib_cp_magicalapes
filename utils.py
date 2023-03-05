@@ -16,10 +16,7 @@ class Timer:
     def __init__(self, millis:bool = False):
         self.elapsed_time = 0
         self.millis = millis
-        if millis:
-            self.start_time = supervisor.ticks_ms()
-        else:
-            self.start_time = time.time()
+        self.start_time = 0
 
     # Resets every 12 hours (approx)
     # We are working with ticks so this is approximate
@@ -31,9 +28,14 @@ class Timer:
 
     def measure(self):
         if self.millis:
+            # supervisor.ticks_ms() does not seem to be very reliable
             now_time = supervisor.ticks_ms()
+            if not self.start_time:
+                self.start_time = now_time
         else:
             now_time = time.time()
+            if not self.start_time:
+                self.start_time = now_time
             
         self.elapsed_time = now_time - self.start_time        
         self._housekeeping()

@@ -17,6 +17,8 @@ class System:
 
     POWER_USB = 1
     POWER_BATTERY = 2
+    
+    GOD_MODE_FILE = '/god_mode.txt'
 
     # 4.2 volt max when Battery is full, when battery goes below or equal 2.8v we must stop draining
     # Hardware must take care of battery management, this is here as a second layer of protection
@@ -24,8 +26,17 @@ class System:
     POWER_FULL = 4.2
     POWER_EMPTY = 2.8
 
-    def __init__(self, vsys: board.Pin = board.A3):
-        self.vpin = analogio.AnalogIn(vsys)
+    def __init__(self, *, vsys: board.Pin = board.A3):
+        if vsys:
+            self.vpin = analogio.AnalogIn(vsys)
+        else:
+            self.vpin = None
+        # check 'remove_for_normal_operation' file
+        try:
+            with open(self.GOD_MODE_FILE, 'r') as f:
+                self._god_mode = True
+        except:
+            self._god_mode = False
 
     @property
     def version(self):
@@ -61,10 +72,10 @@ class System:
     # @return Total voltage available on vsys pin
     @property
     def voltage(self):
-        print(self.vpin.value)
-        print(self.vpin.reference_voltage)
-        #return self.vpin.value * (3 * self.vpin.reference_voltage / 65535)
-        return (self.vpin.value * self.vpin.reference_voltage) / 65536
+        if self.vpin:
+            return (self.vpin.value * self.vpin.reference_voltage) / 65536
+        else:
+            return 0
 
     @property
     def has_enough_power(self):
@@ -87,3 +98,26 @@ class System:
 
     def open_i2c(self, SCL, SDA, freq=400_000):
         return busio.I2C(SCL, SDA, frequency=freq)
+
+    @property
+    def god_mode(self):
+        return self._god_mode
+
+    def exists(self, path:str):
+        try:
+            with open(path, 'r') as f:
+                return True
+        except:
+            return False        
+
+    def switch_god_mode(self):
+        if self.god_mode:
+            # Existing god mode, no switch required
+            return True
+        try:
+            with open(self.GOD_MODE_FILE, 'w') as f:
+                f.write("God mode is on! remove this file to switch back to the normal operation")
+                self._god_mode = True
+                return True
+        except:
+            return False
