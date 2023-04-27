@@ -11,9 +11,11 @@ OLED SSD1306 utility - adafruit_ssd1306 extension
 
 import time, busio, displayio
 import adafruit_ssd1306
+import terminalio
 
 import adafruit_displayio_ssd1306
 import adafruit_imageload
+from adafruit_display_text import label, wrap_text_to_lines
 
 def release():
     # Release all displays
@@ -78,6 +80,13 @@ class _OLED():
                 self._draw_image_ascii(f, color, shift_x, shift_y)
 
             f.close()
+
+    def label(self, text, x:int=10, y:int=10):
+        text = "\n".join(wrap_text_to_lines(text, 18))
+        text_area = label.Label(terminalio.FONT, text=text)
+        text_area.x = x
+        text_area.y = y
+        self.displayio_ssd1306.show(text_area)        
 
     def animate(self, sprite, width, height, frames, *, x:int = 0, y:int = 0, invert:bool = False, repeat:int = 1, fps:int = 20):
         group = displayio.Group()

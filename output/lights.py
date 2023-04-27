@@ -23,8 +23,8 @@ class Pixel:
          return self.strip.brightness
 
     @brightness.setter
-    def brightness(self, brightness:int):
-         self.strip.brightness = brightness
+    def brightness(self, value:int):
+         self.strip.brightness = value
 
     def clear(self):
         for i in range(self.n_pixels):
@@ -63,6 +63,16 @@ class LED_PWM:
         self.pwm = pwmio.PWMOut(pin)
         self.state = 0
         self.duty_cycle = brightness
+
+    @property
+    def brightness(self):
+        return self.duty_cycle
+
+    @brightness.setter
+    def brightness(self, value:int):
+        if self.duty_cycle != value:
+            self.duty_cycle = value
+            self.pwm.duty_cycle = self.duty_cycle
         
     def on(self):
         self.pwm.duty_cycle = self.duty_cycle
