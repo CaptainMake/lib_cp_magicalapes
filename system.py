@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Sameer Charles for Magical Apes
+# SPDX-FileCopyrightText: 2023 Sameer Charles for Magical Apes
 # SPDX-License-Identifier: MIT
 #
 """
@@ -17,7 +17,7 @@ class System:
 
     POWER_USB = 1
     POWER_BATTERY = 2
-    
+
     GOD_MODE_FILE = '/god_mode.txt'
 
     # 4.2 volt max when Battery is full, when battery goes below or equal 2.8v we must stop draining
@@ -93,8 +93,7 @@ class System:
 
     # Can be called to garbage collect and other housekeeping
     def housekeeping(self):
-        if self.mem_avail / 1024 < 50:
-            gc.collect()
+        gc.collect()
 
     def open_i2c(self, SCL, SDA, freq=400_000):
         return busio.I2C(SCL, SDA, frequency=freq)
@@ -108,7 +107,7 @@ class System:
             with open(path, 'r') as f:
                 return True
         except:
-            return False        
+            return False
 
     def switch_god_mode(self):
         if self.god_mode:

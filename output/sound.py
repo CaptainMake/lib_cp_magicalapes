@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Sameer Charles for Magical Apes
+# SPDX-FileCopyrightText: 2023 Sameer Charles for Magical Apes
 # SPDX-License-Identifier: MIT
 #
 """
@@ -116,7 +116,7 @@ class Tone:
                 self.pin, frequency=int(freq), variable_frequency=False
             ) as pwm:
                 pwm.duty_cycle = 0x8000
-                time.sleep(duration)    
+                time.sleep(duration)
         else: # continuous, call stop() to deinit
             if self.pwm is None:
                 self.pwm = pwmio.PWMOut(self.pin, frequency=int(freq), variable_frequency=False)
@@ -143,4 +143,3 @@ class Tone:
     def melody(self, notes):
         for note, secs in notes:
             self.play(note, secs)
-    

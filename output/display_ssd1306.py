@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Sameer Charles for Magical Apes
+# SPDX-FileCopyrightText: 2023 Sameer Charles for Magical Apes
 # SPDX-License-Identifier: MIT
 #
 """
@@ -19,14 +19,14 @@ from adafruit_display_text import label, wrap_text_to_lines
 
 def release():
     # Release all displays
-    displayio.release_displays()    
+    displayio.release_displays()
 
 class _OLED():
 
     def __init__(self, width, height, i2c, addr):
         display_bus = displayio.I2CDisplay(i2c, device_address=addr)
         self.displayio_ssd1306 = adafruit_displayio_ssd1306.SSD1306(display_bus, width=width, height=height)
-        
+
     def circ(self, x, y, r, *, fill=1, color=1):
         for i in range(x-r,x+r+1):
             for j in range(y-r,y+r+1):
@@ -86,7 +86,7 @@ class _OLED():
         text_area = label.Label(terminalio.FONT, text=text)
         text_area.x = x
         text_area.y = y
-        self.displayio_ssd1306.show(text_area)        
+        self.displayio_ssd1306.show(text_area)
 
     def animate(self, sprite, width, height, frames, *, x:int = 0, y:int = 0, invert:bool = False, repeat:int = 1, fps:int = 20):
         group = displayio.Group()
@@ -94,7 +94,7 @@ class _OLED():
         if invert:
             temp = icon_pal[0]
             icon_pal[0] = icon_pal[1]
-            icon_pal[1] = temp    
+            icon_pal[1] = temp
         icon_grid = displayio.TileGrid(icon_bit, pixel_shader=icon_pal, width=1, height=1, tile_height=height, tile_width=width, default_tile=0, x=x, y=y)
         group.append(icon_grid)
         self.displayio_ssd1306.show(group)

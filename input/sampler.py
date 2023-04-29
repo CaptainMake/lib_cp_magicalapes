@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Sameer Charles for Magical Apes
+# SPDX-FileCopyrightText: 2023 Sameer Charles for Magical Apes
 # SPDX-License-Identifier: MIT
 #
 """

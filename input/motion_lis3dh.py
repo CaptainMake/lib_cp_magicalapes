@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Sameer Charles for Magical Apes
+# SPDX-FileCopyrightText: 2023 Sameer Charles for Magical Apes
 # SPDX-License-Identifier: MIT
 #
 """
@@ -37,4 +37,3 @@ class Motion_I2C(adafruit_lis3dh.LIS3DH_I2C, _Motion):
             i2c,
             address = address
             )
-
